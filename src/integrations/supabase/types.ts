@@ -14,16 +14,207 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      events: {
+        Row: {
+          capacity: number | null
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          ends_at: string
+          host_id: string
+          id: string
+          is_paid: boolean
+          online_url: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["event_status"]
+          timezone: string
+          title: string
+          venue_address: string | null
+          visibility: Database["public"]["Enums"]["event_visibility"]
+        }
+        Insert: {
+          capacity?: number | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          ends_at: string
+          host_id: string
+          id?: string
+          is_paid?: boolean
+          online_url?: string | null
+          starts_at: string
+          status?: Database["public"]["Enums"]["event_status"]
+          timezone?: string
+          title: string
+          venue_address?: string | null
+          visibility?: Database["public"]["Enums"]["event_visibility"]
+        }
+        Update: {
+          capacity?: number | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string
+          host_id?: string
+          id?: string
+          is_paid?: boolean
+          online_url?: string | null
+          starts_at?: string
+          status?: Database["public"]["Enums"]["event_status"]
+          timezone?: string
+          title?: string
+          venue_address?: string | null
+          visibility?: Database["public"]["Enums"]["event_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "hosts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      host_members: {
+        Row: {
+          created_at: string
+          host_id: string
+          id: string
+          role: Database["public"]["Enums"]["host_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          host_id: string
+          id?: string
+          role?: Database["public"]["Enums"]["host_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          host_id?: string
+          id?: string
+          role?: Database["public"]["Enums"]["host_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "host_members_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "hosts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hosts: {
+        Row: {
+          bio: string | null
+          contact_email: string | null
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          owner_id: string
+          slug: string
+        }
+        Insert: {
+          bio?: string | null
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          owner_id: string
+          slug: string
+        }
+        Update: {
+          bio?: string | null
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_id?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      rsvps: {
+        Row: {
+          checked_in_at: string | null
+          created_at: string
+          event_id: string
+          id: string
+          qr_code: string
+          status: Database["public"]["Enums"]["rsvp_status"]
+          user_id: string
+        }
+        Insert: {
+          checked_in_at?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          qr_code?: string
+          status?: Database["public"]["Enums"]["rsvp_status"]
+          user_id: string
+        }
+        Update: {
+          checked_in_at?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          qr_code?: string
+          status?: Database["public"]["Enums"]["rsvp_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rsvps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_host_member: {
+        Args: { _host_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      event_status: "draft" | "published"
+      event_visibility: "public" | "unlisted"
+      host_role: "host" | "checker"
+      rsvp_status: "going" | "waitlist" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +341,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      event_status: ["draft", "published"],
+      event_visibility: ["public", "unlisted"],
+      host_role: ["host", "checker"],
+      rsvp_status: ["going", "waitlist", "cancelled"],
+    },
   },
 } as const
