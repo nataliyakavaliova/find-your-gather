@@ -42,7 +42,7 @@ function HostPage() {
         <p className="text-muted-foreground">No published events yet.</p>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {events.map((e) => <EventCard key={e.id} event={{ ...e, hosts: { name: host.name, slug: host.slug } }} />)}
+          {events.map((e: EventLite) => <EventCard key={e.id} event={{ ...e, hosts: { name: host.name, slug: host.slug } }} />)}
         </div>
       )}
     </div>
