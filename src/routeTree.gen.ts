@@ -16,6 +16,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as HostNewRouteImport } from './routes/host.new'
 import { Route as HSlugRouteImport } from './routes/h.$slug'
 import { Route as EventsIdRouteImport } from './routes/events.$id'
+import { Route as DashboardEventsNewRouteImport } from './routes/dashboard.events.new'
+import { Route as DashboardEventsIdEditRouteImport } from './routes/dashboard.events.$id.edit'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -52,34 +54,50 @@ const EventsIdRoute = EventsIdRouteImport.update({
   path: '/events/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardEventsNewRoute = DashboardEventsNewRouteImport.update({
+  id: '/events/new',
+  path: '/events/new',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardEventsIdEditRoute = DashboardEventsIdEditRouteImport.update({
+  id: '/events/$id/edit',
+  path: '/events/$id/edit',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/events/$id': typeof EventsIdRoute
   '/h/$slug': typeof HSlugRoute
   '/host/new': typeof HostNewRoute
+  '/dashboard/events/new': typeof DashboardEventsNewRoute
+  '/dashboard/events/$id/edit': typeof DashboardEventsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/events/$id': typeof EventsIdRoute
   '/h/$slug': typeof HSlugRoute
   '/host/new': typeof HostNewRoute
+  '/dashboard/events/new': typeof DashboardEventsNewRoute
+  '/dashboard/events/$id/edit': typeof DashboardEventsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/events/$id': typeof EventsIdRoute
   '/h/$slug': typeof HSlugRoute
   '/host/new': typeof HostNewRoute
+  '/dashboard/events/new': typeof DashboardEventsNewRoute
+  '/dashboard/events/$id/edit': typeof DashboardEventsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +109,8 @@ export interface FileRouteTypes {
     | '/events/$id'
     | '/h/$slug'
     | '/host/new'
+    | '/dashboard/events/new'
+    | '/dashboard/events/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +120,8 @@ export interface FileRouteTypes {
     | '/events/$id'
     | '/h/$slug'
     | '/host/new'
+    | '/dashboard/events/new'
+    | '/dashboard/events/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -109,11 +131,13 @@ export interface FileRouteTypes {
     | '/events/$id'
     | '/h/$slug'
     | '/host/new'
+    | '/dashboard/events/new'
+    | '/dashboard/events/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   EventsIdRoute: typeof EventsIdRoute
@@ -172,12 +196,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/events/new': {
+      id: '/dashboard/events/new'
+      path: '/events/new'
+      fullPath: '/dashboard/events/new'
+      preLoaderRoute: typeof DashboardEventsNewRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/events/$id/edit': {
+      id: '/dashboard/events/$id/edit'
+      path: '/events/$id/edit'
+      fullPath: '/dashboard/events/$id/edit'
+      preLoaderRoute: typeof DashboardEventsIdEditRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardEventsNewRoute: typeof DashboardEventsNewRoute
+  DashboardEventsIdEditRoute: typeof DashboardEventsIdEditRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardEventsNewRoute: DashboardEventsNewRoute,
+  DashboardEventsIdEditRoute: DashboardEventsIdEditRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   EventsIdRoute: EventsIdRoute,
