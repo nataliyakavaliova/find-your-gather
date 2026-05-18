@@ -21,6 +21,9 @@ export function Header() {
           </Link>
           {user ? (
             <>
+              <Link to="/tickets" className="text-sm text-muted-foreground hover:text-foreground px-3 py-2">
+                Tickets
+              </Link>
               <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground px-3 py-2">
                 Dashboard
               </Link>
