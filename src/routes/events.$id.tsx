@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Globe, Users } from "lucide-react";
+import { Calendar, MapPin, Globe, Users, Ticket as TicketIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/events/$id")({
@@ -44,16 +44,24 @@ function EventPage() {
     queryKey: ["rsvp", id, user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("rsvps").select("*").eq("event_id", id).eq("user_id", user!.id).maybeSingle();
+      const { data } = await supabase
+        .from("rsvps")
+        .select("id, status, position, qr_code")
+        .eq("event_id", id)
+        .eq("user_id", user!.id)
+        .maybeSingle();
       return data;
     },
   });
 
-  const { data: count } = useQuery({
-    queryKey: ["rsvp-count", id],
+  const { data: counts, refetch: refetchCounts } = useQuery({
+    queryKey: ["rsvp-counts", id],
     queryFn: async () => {
-      const { count } = await supabase.from("rsvps").select("*", { count: "exact", head: true }).eq("event_id", id).eq("status", "going");
-      return count ?? 0;
+      const [going, waitlist] = await Promise.all([
+        supabase.from("rsvps").select("*", { count: "exact", head: true }).eq("event_id", id).eq("status", "going"),
+        supabase.from("rsvps").select("*", { count: "exact", head: true }).eq("event_id", id).eq("status", "waitlist"),
+      ]);
+      return { going: going.count ?? 0, waitlist: waitlist.count ?? 0 };
     },
   });
 
@@ -63,20 +71,29 @@ function EventPage() {
 
   const start = new Date(event.starts_at);
   const ended = new Date(event.ends_at).getTime() < Date.now();
+  const active = rsvp && rsvp.status !== "cancelled";
 
   async function rsvpToEvent() {
     if (!user) {
       navigate({ to: "/signin", search: { redirect: `/events/${id}` } });
       return;
     }
-    const { error } = await supabase.from("rsvps").upsert({ event_id: id, user_id: user.id, status: "going" }, { onConflict: "event_id,user_id" });
-    if (error) toast.error(error.message); else { toast.success("You're going!"); refetchRsvp(); router.invalidate(); }
+    const { data, error } = await supabase.rpc("rsvp_to_event", { _event_id: id });
+    if (error) { toast.error(error.message); return; }
+    const r = data as { status: string; position: number | null } | null;
+    if (r?.status === "waitlist") {
+      toast.success(`You're on the waitlist (position #${r.position ?? "?"})`);
+    } else {
+      toast.success("You're going!");
+    }
+    refetchRsvp(); refetchCounts(); router.invalidate();
   }
 
   async function cancel() {
     if (!user) return;
-    const { error } = await supabase.from("rsvps").update({ status: "cancelled" }).eq("event_id", id).eq("user_id", user.id);
-    if (error) toast.error(error.message); else { toast.success("RSVP cancelled"); refetchRsvp(); }
+    const { error } = await supabase.rpc("cancel_rsvp", { _event_id: id });
+    if (error) toast.error(error.message);
+    else { toast.success("RSVP cancelled"); refetchRsvp(); refetchCounts(); }
   }
 
   return (
@@ -98,15 +115,32 @@ function EventPage() {
 
       <h1 className="font-display text-4xl md:text-5xl font-semibold mb-6">{event.title}</h1>
 
+      {active && (
+        <div className="mb-6 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3 text-sm flex items-center justify-between gap-3 flex-wrap">
+          <span>
+            {rsvp!.status === "going"
+              ? "You're confirmed for this event."
+              : `You're on the waitlist (position #${rsvp!.position ?? "?"}). We'll bump you up if a spot opens.`}
+          </span>
+          <Link to="/tickets" className="inline-flex items-center gap-1 text-primary font-medium hover:underline">
+            <TicketIcon className="h-4 w-4" /> View your ticket
+          </Link>
+        </div>
+      )}
+
       <div className="grid gap-3 mb-8 text-sm">
         <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-primary" />{start.toLocaleString()}</div>
         {event.venue_address && <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" />{event.venue_address}</div>}
         {event.online_url && <div className="flex items-center gap-2"><Globe className="h-4 w-4 text-primary" />Online event</div>}
-        <div className="flex items-center gap-2"><Users className="h-4 w-4 text-primary" />{count ?? 0} going{event.capacity ? ` · ${event.capacity} cap` : ""}</div>
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-primary" />
+          {counts?.going ?? 0} going{event.capacity ? ` / ${event.capacity} capacity` : ""}
+          {(counts?.waitlist ?? 0) > 0 && <span className="text-muted-foreground">· {counts!.waitlist} on waitlist</span>}
+        </div>
       </div>
 
       {!ended && (
-        rsvp && rsvp.status === "going" ? (
+        active ? (
           <Button variant="outline" onClick={cancel}>Cancel RSVP</Button>
         ) : (
           <Button size="lg" onClick={rsvpToEvent}>RSVP — it's free</Button>
