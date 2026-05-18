@@ -168,6 +168,7 @@ export type Database = {
           created_at: string
           event_id: string
           id: string
+          position: number | null
           qr_code: string
           status: Database["public"]["Enums"]["rsvp_status"]
           user_id: string
@@ -177,6 +178,7 @@ export type Database = {
           created_at?: string
           event_id: string
           id?: string
+          position?: number | null
           qr_code?: string
           status?: Database["public"]["Enums"]["rsvp_status"]
           user_id: string
@@ -186,6 +188,7 @@ export type Database = {
           created_at?: string
           event_id?: string
           id?: string
+          position?: number | null
           qr_code?: string
           status?: Database["public"]["Enums"]["rsvp_status"]
           user_id?: string
@@ -205,9 +208,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cancel_rsvp: { Args: { _event_id: string }; Returns: undefined }
       is_host_member: {
         Args: { _host_id: string; _user_id: string }
         Returns: boolean
+      }
+      rsvp_to_event: {
+        Args: { _event_id: string }
+        Returns: {
+          checked_in_at: string | null
+          created_at: string
+          event_id: string
+          id: string
+          position: number | null
+          qr_code: string
+          status: Database["public"]["Enums"]["rsvp_status"]
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "rsvps"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {
