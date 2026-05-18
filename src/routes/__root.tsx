@@ -51,6 +51,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Gather — Free community events" },
       { property: "og:description", content: "Discover and host free community events near you." },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "Gather — Free community events" },
+      { name: "twitter:description", content: "Discover and host free community events near you." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6eb143ca-3b7e-4126-825d-d767adf2a0b1/id-preview-24bb2f80--33919458-04f8-4f0b-8538-1a59efa6dd0e.lovable.app-1779088241829.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6eb143ca-3b7e-4126-825d-d767adf2a0b1/id-preview-24bb2f80--33919458-04f8-4f0b-8538-1a59efa6dd0e.lovable.app-1779088241829.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
