@@ -150,7 +150,33 @@ export function EventEditor({ mode }: { mode: Mode }) {
 
       <div className="grid grid-cols-2 gap-4">
         <div><Label>Capacity</Label><Input type="number" min={0} value={form.capacity} onChange={(e) => update("capacity", e.target.value)} /></div>
-        <div><Label>Cover image URL</Label><Input value={form.cover_image_url} onChange={(e) => update("cover_image_url", e.target.value)} /></div>
+        <div>
+          <Label>Cover image</Label>
+          <div className="flex items-center gap-3">
+            <Input
+              type="file"
+              accept="image/*"
+              disabled={busy}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file || !user) return;
+                setBusy(true);
+                const ext = file.name.split(".").pop() || "jpg";
+                const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
+                const { error } = await supabase.storage.from("event-covers").upload(path, file, { upsert: true });
+                if (error) { setBusy(false); return toast.error(error.message); }
+                const { data } = supabase.storage.from("event-covers").getPublicUrl(path);
+                update("cover_image_url", data.publicUrl);
+                setBusy(false);
+                toast.success("Image uploaded");
+              }}
+            />
+            {form.cover_image_url && (
+              <img src={form.cover_image_url} alt="cover" className="h-12 w-12 rounded object-cover border border-border" />
+            )}
+          </div>
+          <Input className="mt-2" placeholder="…or paste image URL" value={form.cover_image_url} onChange={(e) => update("cover_image_url", e.target.value)} />
+        </div>
       </div>
 
       <div className="flex items-center gap-6 flex-wrap p-4 rounded-lg bg-muted/40">
