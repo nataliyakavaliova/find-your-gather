@@ -12,12 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TicketsRouteImport } from './routes/tickets'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as MyEventsRouteImport } from './routes/my-events'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as HostNewRouteImport } from './routes/host.new'
 import { Route as HSlugRouteImport } from './routes/h.$slug'
 import { Route as EventsIdRouteImport } from './routes/events.$id'
+import { Route as EventsIdCheckinRouteImport } from './routes/events.$id.checkin'
 import { Route as DashboardEventsNewRouteImport } from './routes/dashboard.events.new'
 import { Route as DashboardEventsIdEditRouteImport } from './routes/dashboard.events.$id.edit'
 
@@ -36,6 +39,11 @@ const SigninRoute = SigninRouteImport.update({
   path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyEventsRoute = MyEventsRouteImport.update({
+  id: '/my-events',
+  path: '/my-events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -50,6 +58,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardRoute,
+} as any)
+const InviteTokenRoute = InviteTokenRouteImport.update({
+  id: '/invite/$token',
+  path: '/invite/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const HostNewRoute = HostNewRouteImport.update({
   id: '/host/new',
@@ -66,6 +79,11 @@ const EventsIdRoute = EventsIdRouteImport.update({
   path: '/events/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsIdCheckinRoute = EventsIdCheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
+  getParentRoute: () => EventsIdRoute,
+} as any)
 const DashboardEventsNewRoute = DashboardEventsNewRouteImport.update({
   id: '/events/new',
   path: '/events/new',
@@ -80,40 +98,49 @@ const DashboardEventsIdEditRoute = DashboardEventsIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/my-events': typeof MyEventsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/tickets': typeof TicketsRoute
-  '/events/$id': typeof EventsIdRoute
+  '/events/$id': typeof EventsIdRouteWithChildren
   '/h/$slug': typeof HSlugRoute
   '/host/new': typeof HostNewRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/events/new': typeof DashboardEventsNewRoute
+  '/events/$id/checkin': typeof EventsIdCheckinRoute
   '/dashboard/events/$id/edit': typeof DashboardEventsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/my-events': typeof MyEventsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/tickets': typeof TicketsRoute
-  '/events/$id': typeof EventsIdRoute
+  '/events/$id': typeof EventsIdRouteWithChildren
   '/h/$slug': typeof HSlugRoute
   '/host/new': typeof HostNewRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/events/new': typeof DashboardEventsNewRoute
+  '/events/$id/checkin': typeof EventsIdCheckinRoute
   '/dashboard/events/$id/edit': typeof DashboardEventsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/my-events': typeof MyEventsRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/tickets': typeof TicketsRoute
-  '/events/$id': typeof EventsIdRoute
+  '/events/$id': typeof EventsIdRouteWithChildren
   '/h/$slug': typeof HSlugRoute
   '/host/new': typeof HostNewRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/events/new': typeof DashboardEventsNewRoute
+  '/events/$id/checkin': typeof EventsIdCheckinRoute
   '/dashboard/events/$id/edit': typeof DashboardEventsIdEditRoute
 }
 export interface FileRouteTypes {
@@ -121,51 +148,62 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/my-events'
     | '/signin'
     | '/signup'
     | '/tickets'
     | '/events/$id'
     | '/h/$slug'
     | '/host/new'
+    | '/invite/$token'
     | '/dashboard/'
     | '/dashboard/events/new'
+    | '/events/$id/checkin'
     | '/dashboard/events/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/my-events'
     | '/signin'
     | '/signup'
     | '/tickets'
     | '/events/$id'
     | '/h/$slug'
     | '/host/new'
+    | '/invite/$token'
     | '/dashboard'
     | '/dashboard/events/new'
+    | '/events/$id/checkin'
     | '/dashboard/events/$id/edit'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
+    | '/my-events'
     | '/signin'
     | '/signup'
     | '/tickets'
     | '/events/$id'
     | '/h/$slug'
     | '/host/new'
+    | '/invite/$token'
     | '/dashboard/'
     | '/dashboard/events/new'
+    | '/events/$id/checkin'
     | '/dashboard/events/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  MyEventsRoute: typeof MyEventsRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   TicketsRoute: typeof TicketsRoute
-  EventsIdRoute: typeof EventsIdRoute
+  EventsIdRoute: typeof EventsIdRouteWithChildren
   HSlugRoute: typeof HSlugRoute
   HostNewRoute: typeof HostNewRoute
+  InviteTokenRoute: typeof InviteTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -191,6 +229,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my-events': {
+      id: '/my-events'
+      path: '/my-events'
+      fullPath: '/my-events'
+      preLoaderRoute: typeof MyEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -212,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/invite/$token': {
+      id: '/invite/$token'
+      path: '/invite/$token'
+      fullPath: '/invite/$token'
+      preLoaderRoute: typeof InviteTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/host/new': {
       id: '/host/new'
       path: '/host/new'
@@ -232,6 +284,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/events/$id'
       preLoaderRoute: typeof EventsIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/events/$id/checkin': {
+      id: '/events/$id/checkin'
+      path: '/checkin'
+      fullPath: '/events/$id/checkin'
+      preLoaderRoute: typeof EventsIdCheckinRouteImport
+      parentRoute: typeof EventsIdRoute
     }
     '/dashboard/events/new': {
       id: '/dashboard/events/new'
@@ -266,15 +325,29 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface EventsIdRouteChildren {
+  EventsIdCheckinRoute: typeof EventsIdCheckinRoute
+}
+
+const EventsIdRouteChildren: EventsIdRouteChildren = {
+  EventsIdCheckinRoute: EventsIdCheckinRoute,
+}
+
+const EventsIdRouteWithChildren = EventsIdRoute._addFileChildren(
+  EventsIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  MyEventsRoute: MyEventsRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   TicketsRoute: TicketsRoute,
-  EventsIdRoute: EventsIdRoute,
+  EventsIdRoute: EventsIdRouteWithChildren,
   HSlugRoute: HSlugRoute,
   HostNewRoute: HostNewRoute,
+  InviteTokenRoute: InviteTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

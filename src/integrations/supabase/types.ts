@@ -141,6 +141,42 @@ export type Database = {
         }
         Relationships: []
       }
+      invitations: {
+        Row: {
+          created_at: string
+          created_by: string
+          expires_at: string
+          host_id: string
+          id: string
+          role: Database["public"]["Enums"]["host_role"]
+          token: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          expires_at?: string
+          host_id: string
+          id?: string
+          role: Database["public"]["Enums"]["host_role"]
+          token?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          host_id?: string
+          id?: string
+          role?: Database["public"]["Enums"]["host_role"]
+          token?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -208,7 +244,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_invitation: { Args: { _token: string }; Returns: Json }
       cancel_rsvp: { Args: { _event_id: string }; Returns: undefined }
+      check_in_rsvp: { Args: { _event_id: string; _qr: string }; Returns: Json }
+      has_host_role: {
+        Args: {
+          _host_id: string
+          _role: Database["public"]["Enums"]["host_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_host_member: {
         Args: { _host_id: string; _user_id: string }
         Returns: boolean
@@ -232,6 +278,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      undo_check_in: { Args: { _rsvp_id: string }; Returns: undefined }
     }
     Enums: {
       event_status: "draft" | "published"
