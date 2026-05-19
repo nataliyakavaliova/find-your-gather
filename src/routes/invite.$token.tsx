@@ -19,12 +19,14 @@ function InvitePage() {
   const { data: inv, isLoading } = useQuery({
     queryKey: ["invite", token],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data: invitation } = await supabase
         .from("invitations")
-        .select("id, host_id, role, expires_at, used_at, hosts(name, slug)")
+        .select("id, host_id, role, expires_at, used_at")
         .eq("token", token)
         .maybeSingle();
-      return data;
+      if (!invitation) return null;
+      const { data: host } = await supabase.from("hosts").select("name, slug").eq("id", invitation.host_id).maybeSingle();
+      return { ...invitation, host };
     },
   });
 
@@ -46,7 +48,7 @@ function InvitePage() {
   if (!inv) return <Message title="Invitation not found" body="This link is invalid." />;
   if (inv.used_at) return <Message title="Invitation already used" body="This link has been used." />;
   if (new Date(inv.expires_at).getTime() < Date.now()) return <Message title="Invitation expired" body="Ask your host for a new one." />;
-  if (existing) return <Message title="You're already a member" body={`You already have access to ${inv.hosts?.name ?? "this host"}.`} cta={{ to: "/my-events", label: "Go to My Events" }} />;
+  if (existing) return <Message title="You're already a member" body={`You already have access to ${inv.host?.name ?? "this host"}.`} cta={{ to: "/my-events", label: "Go to My Events" }} />;
 
   async function accept() {
     setAccepting(true);
@@ -59,7 +61,7 @@ function InvitePage() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-20 text-center">
-      <h1 className="font-display text-3xl font-semibold mb-2">Join {inv.hosts?.name}</h1>
+      <h1 className="font-display text-3xl font-semibold mb-2">Join {inv.host?.name}</h1>
       <p className="text-muted-foreground mb-6">You've been invited as a <span className="font-medium text-foreground capitalize">{inv.role}</span>.</p>
       <Button size="lg" onClick={accept} disabled={accepting}>{accepting ? "Joining…" : "Accept invitation"}</Button>
     </div>

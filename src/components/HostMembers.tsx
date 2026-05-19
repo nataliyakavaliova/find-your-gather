@@ -18,14 +18,18 @@ export function HostMembers({ hostId, isOwnerOrHost }: { hostId: string; isOwner
   const [role, setRole] = useState<Role>("checker");
   const [link, setLink] = useState<string | null>(null);
 
-  const { data: members, refetch: refetchMembers } = useQuery({
+  const { data: members } = useQuery({
     queryKey: ["host-members", hostId],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data: rows } = await supabase
         .from("host_members")
-        .select("id, role, user_id, created_at, profiles(full_name)")
+        .select("id, role, user_id, created_at")
         .eq("host_id", hostId);
-      return data ?? [];
+      if (!rows?.length) return [];
+      const ids = rows.map((r) => r.user_id);
+      const { data: profs } = await supabase.from("profiles").select("id, full_name").in("id", ids);
+      const map = new Map((profs ?? []).map((p) => [p.id, p.full_name]));
+      return rows.map((r) => ({ ...r, full_name: map.get(r.user_id) ?? null }));
     },
   });
 
@@ -111,7 +115,7 @@ export function HostMembers({ hostId, isOwnerOrHost }: { hostId: string; isOwner
           {(members ?? []).map((m) => (
             <div key={m.id} className="flex items-center justify-between px-4 py-3">
               <div>
-                <div className="font-medium">{m.profiles?.full_name ?? "Unnamed"}</div>
+                <div className="font-medium">{m.full_name ?? "Unnamed"}</div>
                 <div className="text-xs text-muted-foreground">Joined {new Date(m.created_at).toLocaleDateString()}</div>
               </div>
               <Badge variant="outline" className="capitalize">{m.role}</Badge>
