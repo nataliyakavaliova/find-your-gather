@@ -32,7 +32,8 @@ function Dashboard() {
     },
   });
 
-  const activeHostId = selectedHost || memberships?.[0]?.host_id || "";
+  const hostMemberships = (memberships ?? []).filter((m) => m.role === "host");
+  const activeHostId = selectedHost || hostMemberships[0]?.host_id || "";
 
   const { data: events } = useQuery({
     queryKey: ["host-events", activeHostId],
@@ -45,7 +46,16 @@ function Dashboard() {
 
   if (!user) return null;
 
-  if (!memberships?.length) {
+  if (!hostMemberships.length) {
+    if ((memberships ?? []).length) {
+      return (
+        <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+          <h1 className="font-display text-3xl mb-3">Checker access only</h1>
+          <p className="text-muted-foreground mb-6">You can check guests in from My Events.</p>
+          <Button asChild><Link to="/my-events">Go to My Events</Link></Button>
+        </div>
+      );
+    }
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
         <h1 className="font-display text-3xl mb-3">You're not hosting yet</h1>
@@ -67,7 +77,7 @@ function Dashboard() {
       </div>
 
       <div className="flex gap-2 flex-wrap mb-8">
-        {memberships.map((m) => (
+        {hostMemberships.map((m) => (
           <Link
             key={m.host_id}
             to="/dashboard"
@@ -81,9 +91,14 @@ function Dashboard() {
       </div>
 
       <Tabs defaultValue="upcoming">
-        <TabsList><TabsTrigger value="upcoming">Upcoming ({upcoming.length})</TabsTrigger><TabsTrigger value="past">Past ({past.length})</TabsTrigger></TabsList>
+        <TabsList>
+          <TabsTrigger value="upcoming">Upcoming ({upcoming.length})</TabsTrigger>
+          <TabsTrigger value="past">Past ({past.length})</TabsTrigger>
+          <TabsTrigger value="members">Members</TabsTrigger>
+        </TabsList>
         <TabsContent value="upcoming"><EventTable events={upcoming} /></TabsContent>
         <TabsContent value="past"><EventTable events={past} /></TabsContent>
+        <TabsContent value="members"><HostMembers hostId={activeHostId} isOwnerOrHost /></TabsContent>
       </Tabs>
     </div>
   );
