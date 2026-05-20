@@ -12,6 +12,7 @@ export const Route = createFileRoute("/h/$slug")({
       .select("id, title, starts_at, venue_address, cover_image_url")
       .eq("host_id", host.id)
       .eq("status", "published")
+      .eq("hidden", false)
       .order("starts_at", { ascending: false });
     return { host, events: (events ?? []) as EventLite[] };
   },

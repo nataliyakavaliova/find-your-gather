@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus } from "lucide-react";
 import { HostMembers } from "@/components/HostMembers";
+import { GalleryModeration } from "@/components/GalleryModeration";
+import { ExportRsvpsButton } from "@/components/ExportRsvpsButton";
 
 export const Route = createFileRoute("/dashboard/")({
   component: Dashboard,
@@ -94,10 +96,12 @@ function Dashboard() {
         <TabsList>
           <TabsTrigger value="upcoming">Upcoming ({upcoming.length})</TabsTrigger>
           <TabsTrigger value="past">Past ({past.length})</TabsTrigger>
+          <TabsTrigger value="gallery">Gallery moderation</TabsTrigger>
           <TabsTrigger value="members">Members</TabsTrigger>
         </TabsList>
         <TabsContent value="upcoming"><EventTable events={upcoming} /></TabsContent>
         <TabsContent value="past"><EventTable events={past} /></TabsContent>
+        <TabsContent value="gallery"><GalleryModeration hostId={activeHostId} /></TabsContent>
         <TabsContent value="members"><HostMembers hostId={activeHostId} isOwnerOrHost /></TabsContent>
       </Tabs>
     </div>
@@ -119,6 +123,7 @@ function EventTable({ events }: { events: any[] }) {
             <p className="text-sm text-muted-foreground">{new Date(e.starts_at).toLocaleString()}</p>
           </div>
           <div className="flex gap-2">
+            <ExportRsvpsButton eventId={e.id} eventTitle={e.title} />
             <Button asChild variant="outline" size="sm"><Link to="/events/$id" params={{ id: e.id }}>View</Link></Button>
             <Button asChild size="sm"><Link to="/dashboard/events/$id/edit" params={{ id: e.id }}>Edit</Link></Button>
           </div>

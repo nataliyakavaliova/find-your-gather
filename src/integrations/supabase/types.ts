@@ -21,6 +21,7 @@ export type Database = {
           created_at: string
           description: string | null
           ends_at: string
+          hidden: boolean
           host_id: string
           id: string
           is_paid: boolean
@@ -38,6 +39,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           ends_at: string
+          hidden?: boolean
           host_id: string
           id?: string
           is_paid?: boolean
@@ -55,6 +57,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           ends_at?: string
+          hidden?: boolean
           host_id?: string
           id?: string
           is_paid?: boolean
@@ -72,6 +75,88 @@ export type Database = {
             columns: ["host_id"]
             isOneToOne: false
             referencedRelation: "hosts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          event_id: string
+          id: string
+          rating: number
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          rating: number
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          rating?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gallery_photos: {
+        Row: {
+          caption: string | null
+          created_at: string
+          event_id: string
+          hidden: boolean
+          id: string
+          photo_url: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["photo_status"]
+          uploader_id: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          event_id: string
+          hidden?: boolean
+          id?: string
+          photo_url: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["photo_status"]
+          uploader_id: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          event_id?: string
+          hidden?: boolean
+          id?: string
+          photo_url?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["photo_status"]
+          uploader_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gallery_photos_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -198,6 +283,42 @@ export type Database = {
         }
         Relationships: []
       }
+      reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["report_status"]
+          target_id: string
+          target_type: Database["public"]["Enums"]["report_target"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason: string
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          target_id: string
+          target_type: Database["public"]["Enums"]["report_target"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
+          target_id?: string
+          target_type?: Database["public"]["Enums"]["report_target"]
+        }
+        Relationships: []
+      }
       rsvps: {
         Row: {
           checked_in_at: string | null
@@ -259,6 +380,13 @@ export type Database = {
         Args: { _host_id: string; _user_id: string }
         Returns: boolean
       }
+      report_host_id: {
+        Args: {
+          _target_id: string
+          _target_type: Database["public"]["Enums"]["report_target"]
+        }
+        Returns: string
+      }
       rsvp_to_event: {
         Args: { _event_id: string }
         Returns: {
@@ -284,6 +412,9 @@ export type Database = {
       event_status: "draft" | "published"
       event_visibility: "public" | "unlisted"
       host_role: "host" | "checker"
+      photo_status: "pending" | "approved" | "rejected"
+      report_status: "open" | "hidden" | "dismissed"
+      report_target: "event" | "photo"
       rsvp_status: "going" | "waitlist" | "cancelled"
     }
     CompositeTypes: {
@@ -415,6 +546,9 @@ export const Constants = {
       event_status: ["draft", "published"],
       event_visibility: ["public", "unlisted"],
       host_role: ["host", "checker"],
+      photo_status: ["pending", "approved", "rejected"],
+      report_status: ["open", "hidden", "dismissed"],
+      report_target: ["event", "photo"],
       rsvp_status: ["going", "waitlist", "cancelled"],
     },
   },

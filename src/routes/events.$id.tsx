@@ -6,13 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Globe, Users, Ticket as TicketIcon } from "lucide-react";
 import { toast } from "sonner";
+import { EventGallery } from "@/components/EventGallery";
+import { EventFeedback } from "@/components/EventFeedback";
+import { ReportButton } from "@/components/ReportButton";
 
 export const Route = createFileRoute("/events/$id")({
   component: EventPage,
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("events")
-      .select("id, title, description, starts_at, ends_at, venue_address, online_url, capacity, cover_image_url, status, host_id, hosts(name, slug, bio, logo_url)")
+      .select("id, title, description, starts_at, ends_at, venue_address, online_url, capacity, cover_image_url, status, host_id, hidden, hosts(name, slug, bio, logo_url)")
       .eq("id", params.id)
       .maybeSingle();
     return { event: data };
@@ -65,13 +68,27 @@ function EventPage() {
     },
   });
 
+  const { data: isHostMember } = useQuery({
+    queryKey: ["is-host-member", event?.host_id, user?.id],
+    enabled: !!user && !!event?.host_id,
+    queryFn: async () => {
+      const { data } = await supabase.from("host_members").select("role").eq("host_id", event!.host_id).eq("user_id", user!.id).maybeSingle();
+      return !!data;
+    },
+  });
+
   if (!event) {
     return <div className="mx-auto max-w-3xl px-4 py-20 text-center"><p>Event not found.</p></div>;
+  }
+
+  if (event.hidden && !isHostMember) {
+    return <div className="mx-auto max-w-3xl px-4 py-20 text-center"><h1 className="font-display text-2xl mb-2">Content unavailable</h1><p className="text-muted-foreground">This content has been hidden by moderators.</p></div>;
   }
 
   const start = new Date(event.starts_at);
   const ended = new Date(event.ends_at).getTime() < Date.now();
   const active = rsvp && rsvp.status !== "cancelled";
+  const wasGoing = rsvp?.status === "going";
 
   async function rsvpToEvent() {
     if (!user) {
@@ -150,6 +167,11 @@ function EventPage() {
       {event.description && (
         <div className="mt-10 prose prose-stone max-w-none whitespace-pre-wrap">{event.description}</div>
       )}
+
+      <div className="mt-8"><ReportButton targetType="event" targetId={event.id} /></div>
+
+      <EventGallery eventId={event.id} canUpload={!!wasGoing} />
+      <EventFeedback eventId={event.id} ended={ended} canSubmit={!!wasGoing} />
     </article>
   );
 }
