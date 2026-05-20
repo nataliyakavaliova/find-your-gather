@@ -96,10 +96,12 @@ function Dashboard() {
         <TabsList>
           <TabsTrigger value="upcoming">Upcoming ({upcoming.length})</TabsTrigger>
           <TabsTrigger value="past">Past ({past.length})</TabsTrigger>
+          <TabsTrigger value="gallery">Gallery moderation</TabsTrigger>
           <TabsTrigger value="members">Members</TabsTrigger>
         </TabsList>
         <TabsContent value="upcoming"><EventTable events={upcoming} /></TabsContent>
         <TabsContent value="past"><EventTable events={past} /></TabsContent>
+        <TabsContent value="gallery"><GalleryModeration hostId={activeHostId} /></TabsContent>
         <TabsContent value="members"><HostMembers hostId={activeHostId} isOwnerOrHost /></TabsContent>
       </Tabs>
     </div>
