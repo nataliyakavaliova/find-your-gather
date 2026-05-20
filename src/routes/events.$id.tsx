@@ -167,6 +167,11 @@ function EventPage() {
       {event.description && (
         <div className="mt-10 prose prose-stone max-w-none whitespace-pre-wrap">{event.description}</div>
       )}
+
+      <div className="mt-8"><ReportButton targetType="event" targetId={event.id} /></div>
+
+      <EventGallery eventId={event.id} canUpload={!!wasGoing} />
+      <EventFeedback eventId={event.id} ended={ended} canSubmit={!!wasGoing} />
     </article>
   );
 }
