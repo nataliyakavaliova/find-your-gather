@@ -12,12 +12,9 @@ import { Copy, Trash2 } from "lucide-react";
 
 type Role = "host" | "checker";
 
-const FALLBACK_APP_ORIGIN = "https://find-your-gather.lovable.app";
-
 function getInviteBaseUrl() {
-  if (typeof window === "undefined") return FALLBACK_APP_ORIGIN;
-  if (window.location.hostname.endsWith(".lovable.app")) return window.location.origin;
-  return FALLBACK_APP_ORIGIN;
+  if (typeof window === "undefined") return "";
+  return window.location.origin;
 }
 
 export function HostMembers({ hostId, isOwnerOrHost }: { hostId: string; isOwnerOrHost: boolean }) {
