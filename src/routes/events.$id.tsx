@@ -68,13 +68,27 @@ function EventPage() {
     },
   });
 
+  const { data: isHostMember } = useQuery({
+    queryKey: ["is-host-member", event?.host_id, user?.id],
+    enabled: !!user && !!event?.host_id,
+    queryFn: async () => {
+      const { data } = await supabase.from("host_members").select("role").eq("host_id", event!.host_id).eq("user_id", user!.id).maybeSingle();
+      return !!data;
+    },
+  });
+
   if (!event) {
     return <div className="mx-auto max-w-3xl px-4 py-20 text-center"><p>Event not found.</p></div>;
+  }
+
+  if (event.hidden && !isHostMember) {
+    return <div className="mx-auto max-w-3xl px-4 py-20 text-center"><h1 className="font-display text-2xl mb-2">Content unavailable</h1><p className="text-muted-foreground">This content has been hidden by moderators.</p></div>;
   }
 
   const start = new Date(event.starts_at);
   const ended = new Date(event.ends_at).getTime() < Date.now();
   const active = rsvp && rsvp.status !== "cancelled";
+  const wasGoing = rsvp?.status === "going";
 
   async function rsvpToEvent() {
     if (!user) {
