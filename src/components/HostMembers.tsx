@@ -12,7 +12,7 @@ import { Copy, Trash2 } from "lucide-react";
 
 type Role = "host" | "checker";
 
-const FALLBACK_APP_ORIGIN = "https://id-preview--33919458-04f8-4f0b-8538-1a59efa6dd0e.lovable.app";
+const FALLBACK_APP_ORIGIN = "https://find-your-gather.lovable.app";
 
 function getInviteBaseUrl() {
   if (typeof window === "undefined") return FALLBACK_APP_ORIGIN;
