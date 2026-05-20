@@ -33,6 +33,7 @@ function Explore() {
         .select("id, title, starts_at, venue_address, cover_image_url, hosts(name, slug)")
         .eq("status", "published")
         .eq("visibility", "public")
+        .eq("hidden", false)
         .order("starts_at", { ascending: true });
 
       if (!includePast) query = query.gte("starts_at", new Date().toISOString());
