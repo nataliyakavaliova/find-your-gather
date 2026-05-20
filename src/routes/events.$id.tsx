@@ -6,13 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Globe, Users, Ticket as TicketIcon } from "lucide-react";
 import { toast } from "sonner";
+import { EventGallery } from "@/components/EventGallery";
+import { EventFeedback } from "@/components/EventFeedback";
+import { ReportButton } from "@/components/ReportButton";
 
 export const Route = createFileRoute("/events/$id")({
   component: EventPage,
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("events")
-      .select("id, title, description, starts_at, ends_at, venue_address, online_url, capacity, cover_image_url, status, host_id, hosts(name, slug, bio, logo_url)")
+      .select("id, title, description, starts_at, ends_at, venue_address, online_url, capacity, cover_image_url, status, host_id, hidden, hosts(name, slug, bio, logo_url)")
       .eq("id", params.id)
       .maybeSingle();
     return { event: data };
