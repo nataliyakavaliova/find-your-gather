@@ -123,6 +123,7 @@ function EventTable({ events }: { events: any[] }) {
             <p className="text-sm text-muted-foreground">{new Date(e.starts_at).toLocaleString()}</p>
           </div>
           <div className="flex gap-2">
+            <ExportRsvpsButton eventId={e.id} eventTitle={e.title} />
             <Button asChild variant="outline" size="sm"><Link to="/events/$id" params={{ id: e.id }}>View</Link></Button>
             <Button asChild size="sm"><Link to="/dashboard/events/$id/edit" params={{ id: e.id }}>Edit</Link></Button>
           </div>
