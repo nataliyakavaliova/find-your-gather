@@ -12,11 +12,20 @@ import { Copy, Trash2 } from "lucide-react";
 
 type Role = "host" | "checker";
 
+const FALLBACK_APP_ORIGIN = "https://id-preview--33919458-04f8-4f0b-8538-1a59efa6dd0e.lovable.app";
+
+function getInviteBaseUrl() {
+  if (typeof window === "undefined") return FALLBACK_APP_ORIGIN;
+  if (window.location.hostname.endsWith(".lovable.app")) return window.location.origin;
+  return FALLBACK_APP_ORIGIN;
+}
+
 export function HostMembers({ hostId, isOwnerOrHost }: { hostId: string; isOwnerOrHost: boolean }) {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [role, setRole] = useState<Role>("checker");
   const [link, setLink] = useState<string | null>(null);
+  const inviteBaseUrl = getInviteBaseUrl();
 
   const { data: members } = useQuery({
     queryKey: ["host-members", hostId],
@@ -53,7 +62,7 @@ export function HostMembers({ hostId, isOwnerOrHost }: { hostId: string; isOwner
       .select("token")
       .single();
     if (error) { toast.error(error.message); return; }
-    const url = `${window.location.origin}/invite/${data.token}`;
+    const url = `${inviteBaseUrl}/invite/${data.token}`;
     setLink(url);
     refetchInvites();
   }
@@ -130,7 +139,7 @@ export function HostMembers({ hostId, isOwnerOrHost }: { hostId: string; isOwner
           <h3 className="font-display text-lg mb-3">Pending invitations</h3>
           <div className="border border-border rounded-lg divide-y divide-border">
             {(invites ?? []).filter((i) => !i.used_at && new Date(i.expires_at).getTime() > Date.now()).map((i) => {
-              const url = `${window.location.origin}/invite/${i.token}`;
+              const url = `${inviteBaseUrl}/invite/${i.token}`;
               return (
                 <div key={i.id} className="flex items-center justify-between px-4 py-3 gap-2">
                   <div className="min-w-0 flex-1">
