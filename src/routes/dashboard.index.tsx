@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus } from "lucide-react";
 import { HostMembers } from "@/components/HostMembers";
+import { GalleryModeration } from "@/components/GalleryModeration";
+import { ExportRsvpsButton } from "@/components/ExportRsvpsButton";
 
 export const Route = createFileRoute("/dashboard/")({
   component: Dashboard,
