@@ -135,7 +135,7 @@ export function HostMembers({ hostId, isOwnerOrHost }: { hostId: string; isOwner
                 <div key={i.id} className="flex items-center justify-between px-4 py-3 gap-2">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2"><Badge variant="outline" className="capitalize">{i.role}</Badge><span className="text-xs text-muted-foreground">expires {new Date(i.expires_at).toLocaleDateString()}</span></div>
-                    <div className="text-xs text-muted-foreground truncate font-mono mt-1">{url}</div>
+                    <a href={url} target="_blank" rel="noreferrer" className="text-xs text-muted-foreground truncate font-mono mt-1 block hover:text-foreground underline">{url}</a>
                   </div>
                   <Button variant="outline" size="sm" onClick={() => copy(url)}><Copy className="h-4 w-4" /></Button>
                   <Button variant="ghost" size="sm" onClick={() => revoke(i.id)}><Trash2 className="h-4 w-4" /></Button>

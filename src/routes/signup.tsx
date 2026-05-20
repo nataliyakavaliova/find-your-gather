@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,6 @@ export const Route = createFileRoute("/signup")({
 });
 
 function SignUp() {
-  const navigate = useNavigate();
   const { redirect } = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +31,7 @@ function SignUp() {
     });
     setBusy(false);
     if (error) toast.error(error.message);
-    else { toast.success("Account created!"); navigate({ to: redirect }); }
+    else { toast.success("Account created!"); window.location.href = redirect; }
   }
 
   return (

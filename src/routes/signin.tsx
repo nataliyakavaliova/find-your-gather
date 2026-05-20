@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,6 @@ export const Route = createFileRoute("/signin")({
 });
 
 function SignIn() {
-  const navigate = useNavigate();
   const { redirect } = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +23,7 @@ function SignIn() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error) toast.error(error.message);
-    else { toast.success("Welcome back!"); navigate({ to: redirect }); }
+    else { toast.success("Welcome back!"); window.location.href = redirect; }
   }
 
   return (
