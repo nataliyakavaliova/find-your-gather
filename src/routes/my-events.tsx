@@ -42,7 +42,7 @@ function MyEventsPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("events")
-        .select("id, title, starts_at, host_id, hosts(name)")
+        .select("id, title, starts_at, ends_at, host_id, hosts(name)")
         .in("host_id", hostIds)
         .order("starts_at", { ascending: false });
       return data ?? [];
@@ -85,7 +85,7 @@ function MyEventsPage() {
         {filtered.length === 0 && <p className="p-8 text-center text-muted-foreground">No events.</p>}
         {filtered.map((e) => {
           const role = roleByHost[e.host_id];
-          const past = new Date(e.starts_at).getTime() < now;
+          const past = new Date(e.ends_at).getTime() < now;
           return (
             <div key={e.id} className="flex flex-wrap items-center justify-between gap-3 p-4 bg-card">
               <div>
