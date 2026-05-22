@@ -42,7 +42,7 @@ function MyEventsPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("events")
-        .select("id, title, starts_at, host_id, hosts(name)")
+        .select("id, title, starts_at, ends_at, host_id, hosts(name)")
         .in("host_id", hostIds)
         .order("starts_at", { ascending: false });
       return data ?? [];
