@@ -68,8 +68,8 @@ function Dashboard() {
   }
 
   const now = Date.now();
-  const upcoming = (events ?? []).filter((e) => new Date(e.starts_at).getTime() >= now);
-  const past = (events ?? []).filter((e) => new Date(e.starts_at).getTime() < now);
+  const upcoming = (events ?? []).filter((e) => new Date(e.ends_at).getTime() >= now);
+  const past = (events ?? []).filter((e) => new Date(e.ends_at).getTime() < now);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
