@@ -85,7 +85,7 @@ function MyEventsPage() {
         {filtered.length === 0 && <p className="p-8 text-center text-muted-foreground">No events.</p>}
         {filtered.map((e) => {
           const role = roleByHost[e.host_id];
-          const past = new Date(e.starts_at).getTime() < now;
+          const past = new Date(e.ends_at).getTime() < now;
           return (
             <div key={e.id} className="flex flex-wrap items-center justify-between gap-3 p-4 bg-card">
               <div>
