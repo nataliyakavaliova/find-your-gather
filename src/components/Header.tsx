@@ -37,7 +37,10 @@ export function Header() {
                 <Link to="/my-events" className="text-sm text-muted-foreground hover:text-foreground px-3 py-2">My Events</Link>
               )}
               {hasHost && (
-                <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground px-3 py-2">Dashboard</Link>
+                <>
+                  <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground px-3 py-2">Dashboard</Link>
+                  <Link to="/moderation" className="text-sm text-muted-foreground hover:text-foreground px-3 py-2">Moderation</Link>
+                </>
               )}
               <Button variant="outline" size="sm" onClick={async () => { await signOut(); navigate({ to: "/" }); }}>Sign out</Button>
             </>
