@@ -109,7 +109,12 @@ function Dashboard() {
 }
 
 function EventTable({ events }: { events: any[] }) {
-  if (!events.length) return <p className="text-muted-foreground py-10">No events here.</p>;
+  if (!events.length) return (
+    <div className="text-center py-12 mt-4 border border-dashed border-border rounded-lg">
+      <p className="font-display text-lg mb-1">No events here yet.</p>
+      <p className="text-sm text-muted-foreground">Create your first event to get started.</p>
+    </div>
+  );
   return (
     <div className="divide-y divide-border border border-border rounded-lg overflow-hidden mt-4">
       {events.map((e) => (
