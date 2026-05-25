@@ -149,7 +149,7 @@ export function EventEditor({ mode }: { mode: Mode }) {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div><Label>Capacity</Label><Input type="number" min={0} value={form.capacity} onChange={(e) => update("capacity", e.target.value)} /></div>
+        <div><Label>Capacity</Label><Input type="number" min={1} step={1} placeholder="Unlimited" value={form.capacity} onChange={(e) => update("capacity", e.target.value)} /><p className="text-xs text-muted-foreground mt-1">Leave empty for unlimited. Must be a positive whole number.</p></div>
         <div>
           <Label>Cover image</Label>
           <div className="flex items-center gap-3">
