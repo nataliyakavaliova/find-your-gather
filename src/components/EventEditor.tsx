@@ -72,6 +72,16 @@ export function EventEditor({ mode }: { mode: Mode }) {
   const update = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
   async function save(nextStatus?: "draft" | "published") {
+    if (form.capacity) {
+      const cap = parseInt(form.capacity);
+      if (!Number.isInteger(cap) || cap < 1) {
+        toast.error("Capacity must be a positive whole number");
+        return;
+      }
+    }
+    if (form.online_url) {
+      try { new URL(form.online_url); } catch { toast.error("Online URL must be a valid URL"); return; }
+    }
     setBusy(true);
     const payload = {
       host_id: form.host_id,
