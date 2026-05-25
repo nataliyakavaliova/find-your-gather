@@ -75,11 +75,20 @@ function TicketsPage() {
 }
 
 function TicketList({ tickets, loading }: { tickets: Ticket[]; loading: boolean }) {
-  if (loading) return <p className="text-muted-foreground">Loading…</p>;
+  if (loading) {
+    return (
+      <div className="grid gap-4" aria-busy="true">
+        {[0, 1].map((i) => (
+          <div key={i} className="rounded-xl border border-border bg-card p-5 h-40 animate-pulse" />
+        ))}
+      </div>
+    );
+  }
   if (!tickets.length) {
     return (
-      <div className="text-center py-16 text-muted-foreground">
-        <p className="font-display text-xl mb-3">Nothing here yet.</p>
+      <div className="text-center py-16">
+        <p className="font-display text-xl mb-2">You have no upcoming tickets.</p>
+        <p className="text-muted-foreground mb-4">Find an event on Explore.</p>
         <Button asChild><Link to="/">Browse events</Link></Button>
       </div>
     );
