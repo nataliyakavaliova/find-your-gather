@@ -85,11 +85,21 @@ function Explore() {
         </div>
 
         {isLoading ? (
-          <p className="text-muted-foreground">Loading events…</p>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" aria-busy="true">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
+                <div className="aspect-[16/9] bg-muted animate-pulse" />
+                <div className="p-5 space-y-3">
+                  <div className="h-4 w-2/3 bg-muted rounded animate-pulse" />
+                  <div className="h-3 w-1/2 bg-muted rounded animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : !events?.length ? (
-          <div className="text-center py-20 text-muted-foreground">
-            <p className="font-display text-2xl mb-2">No events found</p>
-            <p className="text-sm">Try adjusting your filters.</p>
+          <div className="text-center py-20">
+            <p className="font-display text-2xl mb-2">No events match your filters.</p>
+            <p className="text-sm text-muted-foreground">Try clearing the search or date range.</p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
