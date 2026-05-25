@@ -16,12 +16,31 @@ export const Route = createFileRoute("/h/$slug")({
       .order("starts_at", { ascending: false });
     return { host, events: (events ?? []) as EventLite[] };
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: loaderData?.host ? `${loaderData.host.name} — Gather` : "Host" },
-      { name: "description", content: loaderData?.host?.bio?.slice(0, 160) ?? "Host on Gather" },
-    ],
-  }),
+  head: ({ loaderData, params }) => {
+    const h = loaderData?.host;
+    const title = h ? `${h.name} — Gather` : "Host — Gather";
+    const desc = (h?.bio?.slice(0, 160) ?? `Events hosted by ${h?.name ?? "this host"} on Gather.`).replace(/\s+/g, " ").trim();
+    const url = `https://find-your-gather.lovable.app/h/${params.slug}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "profile" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(h?.logo_url
+          ? [
+              { property: "og:image", content: h.logo_url },
+              { name: "twitter:image", content: h.logo_url },
+            ]
+          : []),
+      ],
+    };
+  },
 });
 
 function HostPage() {
