@@ -139,8 +139,8 @@ function TicketCard({ ticket }: { ticket: Ticket }) {
       </div>
       {ticket.status === "going" && (
         <div className="flex flex-col items-center justify-center bg-background rounded-lg p-3 border border-border">
-          <QRCodeSVG value={ticket.qr_code} size={128} />
-          <p className="text-[10px] text-muted-foreground mt-2 font-mono">{ticket.qr_code.slice(0, 12)}…</p>
+          <QRCodeSVG value={ticket.qr_code} size={128} aria-label="Check-in QR code" />
+          <p className="text-[10px] text-muted-foreground mt-2 font-mono break-all max-w-[140px] text-center select-all" title="Type this code at check-in if scanning fails">{ticket.qr_code}</p>
         </div>
       )}
     </div>
