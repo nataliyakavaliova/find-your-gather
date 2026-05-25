@@ -51,7 +51,13 @@ function MyEventsPage() {
 
   if (!user) return null;
   if (!memberships?.length) {
-    return <div className="mx-auto max-w-2xl px-4 py-20 text-center text-muted-foreground">You're not a member of any host yet.</div>;
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+        <p className="font-display text-xl mb-2">You're not part of any host yet.</p>
+        <p className="text-muted-foreground mb-4">Create one or accept an invite.</p>
+        <Button asChild><Link to="/host/new">Become a host</Link></Button>
+      </div>
+    );
   }
 
   const now = Date.now();

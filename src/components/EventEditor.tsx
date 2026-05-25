@@ -72,6 +72,16 @@ export function EventEditor({ mode }: { mode: Mode }) {
   const update = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
   async function save(nextStatus?: "draft" | "published") {
+    if (form.capacity) {
+      const cap = parseInt(form.capacity);
+      if (!Number.isInteger(cap) || cap < 1) {
+        toast.error("Capacity must be a positive whole number");
+        return;
+      }
+    }
+    if (form.online_url) {
+      try { new URL(form.online_url); } catch { toast.error("Online URL must be a valid URL"); return; }
+    }
     setBusy(true);
     const payload = {
       host_id: form.host_id,
@@ -149,7 +159,7 @@ export function EventEditor({ mode }: { mode: Mode }) {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div><Label>Capacity</Label><Input type="number" min={0} value={form.capacity} onChange={(e) => update("capacity", e.target.value)} /></div>
+        <div><Label>Capacity</Label><Input type="number" min={1} step={1} placeholder="Unlimited" value={form.capacity} onChange={(e) => update("capacity", e.target.value)} /><p className="text-xs text-muted-foreground mt-1">Leave empty for unlimited. Must be a positive whole number.</p></div>
         <div>
           <Label>Cover image</Label>
           <div className="flex items-center gap-3">

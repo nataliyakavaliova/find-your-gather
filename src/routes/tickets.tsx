@@ -75,11 +75,20 @@ function TicketsPage() {
 }
 
 function TicketList({ tickets, loading }: { tickets: Ticket[]; loading: boolean }) {
-  if (loading) return <p className="text-muted-foreground">Loading…</p>;
+  if (loading) {
+    return (
+      <div className="grid gap-4" aria-busy="true">
+        {[0, 1].map((i) => (
+          <div key={i} className="rounded-xl border border-border bg-card p-5 h-40 animate-pulse" />
+        ))}
+      </div>
+    );
+  }
   if (!tickets.length) {
     return (
-      <div className="text-center py-16 text-muted-foreground">
-        <p className="font-display text-xl mb-3">Nothing here yet.</p>
+      <div className="text-center py-16">
+        <p className="font-display text-xl mb-2">You have no upcoming tickets.</p>
+        <p className="text-muted-foreground mb-4">Find an event on Explore.</p>
         <Button asChild><Link to="/">Browse events</Link></Button>
       </div>
     );
@@ -130,8 +139,8 @@ function TicketCard({ ticket }: { ticket: Ticket }) {
       </div>
       {ticket.status === "going" && (
         <div className="flex flex-col items-center justify-center bg-background rounded-lg p-3 border border-border">
-          <QRCodeSVG value={ticket.qr_code} size={128} />
-          <p className="text-[10px] text-muted-foreground mt-2 font-mono">{ticket.qr_code.slice(0, 12)}…</p>
+          <QRCodeSVG value={ticket.qr_code} size={128} aria-label="Check-in QR code" />
+          <p className="text-[10px] text-muted-foreground mt-2 font-mono break-all max-w-[140px] text-center select-all" title="Type this code at check-in if scanning fails">{ticket.qr_code}</p>
         </div>
       )}
     </div>

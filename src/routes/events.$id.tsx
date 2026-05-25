@@ -20,17 +20,28 @@ export const Route = createFileRoute("/events/$id")({
       .maybeSingle();
     return { event: data };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const e = loaderData?.event;
     const title = e ? `${e.title} — Gather` : "Event — Gather";
-    const desc = e?.description?.slice(0, 160) ?? "Join this event on Gather.";
+    const desc = (e?.description?.slice(0, 160) ?? "Join this event on Gather.").replace(/\s+/g, " ").trim();
+    const url = `https://find-your-gather.lovable.app/events/${params.id}`;
     return {
       meta: [
         { title },
         { name: "description", content: desc },
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
-        ...(e?.cover_image_url ? [{ property: "og:image", content: e.cover_image_url }] : []),
+        { property: "og:type", content: "event" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
+        ...(e?.cover_image_url
+          ? [
+              { property: "og:image", content: e.cover_image_url },
+              { name: "twitter:image", content: e.cover_image_url },
+            ]
+          : []),
       ],
     };
   },

@@ -87,11 +87,19 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-dvh flex flex-col">
           <Header />
           <main className="flex-1"><Outlet /></main>
-          <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
-            <span className="font-display">Gather</span> — bringing people together.
+          <footer className="border-t border-border bg-background">
+            <div className="mx-auto max-w-6xl px-4 py-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between text-sm text-muted-foreground">
+              <div className="font-display text-foreground">Gather</div>
+              <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                <Link to="/" className="hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">Explore</Link>
+                <Link to="/signup" className="hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">Sign up</Link>
+                <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">GitHub</a>
+              </nav>
+              <a href="https://lovable.dev" target="_blank" rel="noreferrer" className="hover:text-foreground">Built with Lovable</a>
+            </div>
           </footer>
         </div>
         <Toaster />
